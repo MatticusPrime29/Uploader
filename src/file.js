@@ -1,10 +1,11 @@
 var utils = require('./utils')
 var Chunk = require('./chunk')
 
-function File (uploader, file, parent) {
+function File (uploader, file, parent, listID) {
   utils.defineNonEnumerable(this, 'uploader', uploader)
   this.isRoot = this.isFolder = uploader === this
   utils.defineNonEnumerable(this, 'parent', parent || null)
+  utils.defineNonEnumerable(this, 'listID', listID)
   utils.defineNonEnumerable(this, 'files', [])
   utils.defineNonEnumerable(this, 'fileList', [])
   utils.defineNonEnumerable(this, 'chunks', [])
@@ -55,10 +56,10 @@ utils.extend(File.prototype, {
     if (ppaths.length) {
       var filePaths = this.uploader.filePaths
       utils.each(ppaths, function (path, i) {
-        var folderFile = filePaths[path]
+        var folderFile = filePaths[this.listID]
         if (!folderFile) {
-          folderFile = new File(this.uploader, path, this.parent)
-          filePaths[path] = folderFile
+          folderFile = new File(this.uploader, path, this.parent, this.listID)
+          filePaths[this.listID] = folderFile
           this._updateParentFileList(folderFile)
         }
         this.parent = folderFile
@@ -466,7 +467,7 @@ utils.extend(File.prototype, {
 
   _delFilePath: function (file) {
     if (file.path && this.filePaths) {
-      delete this.filePaths[file.path]
+      delete this.filePaths[file.listID]
     }
     utils.each(file.fileList, function (file) {
       this._delFilePath(file)
