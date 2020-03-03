@@ -140,6 +140,20 @@ utils.extend(Uploader.prototype, {
   addFiles: function (files, evt) {
     var _files = []
     var oldFileListLen = this.fileList.length
+    
+    //******Matt's Changes*****//
+    var listID = Math.floor(Math.random() * Math.floor(5000));
+    
+    while(true) {
+      if (this.fileList.find( folder => folder.listID === listID) === undefined){
+        break;
+      }
+      else {
+        listID = Math.floor(Math.random() * Math.floor(5000));
+      }
+    }
+    //******Matt's Changes*****//
+    
     utils.each(files, function (file) {
       // Uploading empty file IE10/IE11 hangs indefinitely
       // Directories have size `0` and name `.`
@@ -147,7 +161,7 @@ utils.extend(Uploader.prototype, {
       if ((!ie10plus || ie10plus && file.size > 0) && !(file.size % 4096 === 0 && (file.name === '.' || file.fileName === '.'))) {
         var uniqueIdentifier = this.generateUniqueIdentifier(file)
         if (this.opts.allowDuplicateUploads || !this.getFromUniqueIdentifier(uniqueIdentifier)) {
-          var _file = new File(this, file, this)
+          var _file = new File(this, file, this, listID)
           _file.uniqueIdentifier = uniqueIdentifier
           if (this._trigger('fileAdded', _file, evt)) {
             _files.push(_file)
