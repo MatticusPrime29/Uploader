@@ -341,7 +341,7 @@ utils.extend(File.prototype, {
     utils.each(chunks, function (c) {
       if (c.status() === uploadingStatus) {
         c.abort()
-        this.uploader.uploadNextChunk()
+        //this.uploader.uploadNextChunk()
       }
     }, this)
   },
