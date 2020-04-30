@@ -51,6 +51,7 @@ function Uploader (opts) {
   }
   this.supportDirectory = supportDirectory
   utils.defineNonEnumerable(this, 'filePaths', {})
+  utils.defineNonEnumerable(this, "pathList", [])
   this.opts = utils.extend({}, Uploader.defaults, opts || {})
 
   this.preventEvent = utils.bind(this._preventEvent, this)
@@ -383,9 +384,25 @@ utils.extend(Uploader.prototype, {
       // When new files are added, simply append them to the overall list
       var that = this
       input.addEventListener('change', function (e) {
+        
         that._trigger(e.type, e)
+
+        
         if (e.target.value) {
-          that.addFiles(e.target.files, e)
+          var fileTocheck = e.target.files[0]; //I guess?
+          console.log(fileTocheck)
+          console.log(e.target)
+          var currentPath = fileTocheck.relativePath || fileTocheck.webkitRelativePath || fileTocheck.filename || fileTocheck.name;
+          var path = parsePaths(currentPath)[0]
+          console.log(currentPath)
+          console.log(path)
+          console.log(that.pathList)
+          if (that.pathList.indexOf(path) === -1) {
+            console.log('path is unique')
+            //it has not been used
+            that.pathList.push(path);
+            that.addFiles(e.target.files, e)
+          }
           e.target.value = ''
         }
       }, false)
@@ -512,3 +529,19 @@ utils.extend(Uploader.prototype, {
 })
 
 module.exports = Uploader
+
+function parsePaths(path) {
+  var ret = []
+  var paths = path.split('/')
+  var len = paths.length
+  var i = 1
+  paths.splice(len - 1, 1)
+  len--
+  if (paths.length) {
+    while (i <= len) {
+      ret.push(paths.slice(0, i++).join('/') + '/')
+    }
+  }
+  return ret
+}
+
