@@ -52,6 +52,7 @@ function Uploader (opts) {
   this.supportDirectory = supportDirectory
   utils.defineNonEnumerable(this, 'filePaths', {})
   utils.defineNonEnumerable(this, "pathList", [])
+  utils.defineNonEnumerable(this, "listIDs", [])
   this.opts = utils.extend({}, Uploader.defaults, opts || {})
 
   this.preventEvent = utils.bind(this._preventEvent, this)
@@ -141,6 +142,29 @@ utils.extend(Uploader.prototype, {
   addFiles: function (files, evt) {
     var _files = []
     var oldFileListLen = this.fileList.length
+    //******Matt's Changes*****//
+    var listID = Math.floor(Math.random() * Math.floor(5000));
+    while (true) {
+      if (this.listIDs.find(id => id === listID) === undefined) {
+        break;
+      }
+      else {
+        listID = Math.floor(Math.random() * Math.floor(5000));
+      }
+    }
+    var currentPath = files[0].relativePath || files[0].webkitRelativePath || files[0].filename || files[0].name;
+    var path = parsePaths(currentPath)[0]
+    console.log(this.pathList)
+    var isDuplicate = false;
+    if (this.pathList.indexOf(path) !== -1) {
+      //it has been used
+      isDuplicate = true;
+      var newPath = path.substring(0, path.length - 1) + listID + "/";
+    }
+    else {
+      this.pathList.push(path);
+    }
+    //******Matt's Changes*****//
     utils.each(files, function (file) {
       // Uploading empty file IE10/IE11 hangs indefinitely
       // Directories have size `0` and name `.`
@@ -148,7 +172,7 @@ utils.extend(Uploader.prototype, {
       if ((!ie10plus || ie10plus && file.size > 0) && !(file.size % 4096 === 0 && (file.name === '.' || file.fileName === '.'))) {
         var uniqueIdentifier = this.generateUniqueIdentifier(file)
         if (this.opts.allowDuplicateUploads || !this.getFromUniqueIdentifier(uniqueIdentifier)) {
-          var _file = new File(this, file, this)
+          var _file = new File(this, file, this, isDuplicate ? newPath : null)
           _file.uniqueIdentifier = uniqueIdentifier
           if (this._trigger('fileAdded', _file, evt)) {
             _files.push(_file)
@@ -387,22 +411,8 @@ utils.extend(Uploader.prototype, {
         
         that._trigger(e.type, e)
 
-        
         if (e.target.value) {
-          var fileTocheck = e.target.files[0]; //I guess?
-          console.log(fileTocheck)
-          console.log(e.target)
-          var currentPath = fileTocheck.relativePath || fileTocheck.webkitRelativePath || fileTocheck.filename || fileTocheck.name;
-          var path = parsePaths(currentPath)[0]
-          console.log(currentPath)
-          console.log(path)
-          console.log(that.pathList)
-          if (that.pathList.indexOf(path) === -1) {
-            console.log('path is unique')
-            //it has not been used
-            that.pathList.push(path);
-            that.addFiles(e.target.files, e)
-          }
+          that.addFiles(e.target.files, e)
           e.target.value = ''
         }
       }, false)
