@@ -476,15 +476,6 @@ utils.extend(File.prototype, {
     this._removeFile(file)
   },
 
-  _delFilePath: function (file) {
-    if (file.path && this.filePaths) {
-      delete this.filePaths[file.path]
-    }
-    utils.each(file.fileList, function (file) {
-      this._delFilePath(file)
-    }, this)
-  },
-
   _removeFile: function (file) {
     if (!file.isFolder) {
       utils.each(this.files, function (f, i) {
