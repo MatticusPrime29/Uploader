@@ -160,6 +160,7 @@ utils.extend(Uploader.prototype, {
       //it has been used
       isDuplicate = true;
       var newPath = path.substring(0, path.length - 1) + listID + "/";
+      this.listIDs.push(listID)
     }
     else {
       this.pathList.push(path);
@@ -212,6 +213,15 @@ utils.extend(Uploader.prototype, {
   removeFile: function (file) {
     File.prototype.removeFile.call(this, file)
     this._trigger('fileRemoved', file)
+  },
+
+  _delFilePath: function (file) {
+    if (file.path && this.filePaths) {
+      delete this.filePaths[file.path]
+    }
+    utils.each(file.fileList, function (file) {
+      this._delFilePath(file)
+    }, this)
   },
 
   generateUniqueIdentifier: function (file) {
