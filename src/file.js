@@ -2,7 +2,6 @@ var utils = require('./utils')
 var Chunk = require('./chunk')
 
 function File(uploader, file, parent, newPath=null) {
-  console.log(file)
   utils.defineNonEnumerable(this, 'uploader', uploader)
   this.isRoot = this.isFolder = uploader === this
   utils.defineNonEnumerable(this, 'parent', parent || null)
@@ -34,11 +33,9 @@ function File(uploader, file, parent, newPath=null) {
       if (newPath !== null) {
         //use the path with the listID
         //use the regular relative path
-        console.log(newPath)
         var paths = parsePaths(this.relativePath)
         var oldPath = paths[0]; //should be the first before /
         this.relativePath = this.relativePath.replace(oldPath, newPath)
-        console.log(this.relativePath)
       }
       
       this._parseFile()
@@ -65,7 +62,6 @@ utils.extend(File.prototype, {
     var ppaths = parsePaths(this.relativePath)
     if (ppaths.length) {
       var filePaths = this.uploader.filePaths
-      console.log(filePaths)
       utils.each(ppaths, function (path, i) {
         var folderFile = filePaths[path]
         if (!folderFile) {
@@ -302,8 +298,9 @@ utils.extend(File.prototype, {
     }, function () {
       this.paused = false
       this.aborted = false
-      this.uploader.upload()
+      
     })
+    // this.uploader.upload()
     this.paused = false
     this.aborted = false
   },
