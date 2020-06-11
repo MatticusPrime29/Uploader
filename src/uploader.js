@@ -215,6 +215,10 @@ utils.extend(Uploader.prototype, {
   },
 
   _delFilePath: function (file) {
+    var index = this.pathList.indexOf(parsePaths(file.path)[0])
+    if (index !== -1) {
+      this.pathList.splice(index, 1);
+    }
     if (file.path && this.filePaths) {
       delete this.filePaths[file.path]
     }
