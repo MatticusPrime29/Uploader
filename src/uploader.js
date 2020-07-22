@@ -154,6 +154,9 @@ utils.extend(Uploader.prototype, {
     }
     var currentPath = files[0].relativePath || files[0].webkitRelativePath || files[0].filename || files[0].name;
     var path = parsePaths(currentPath)[0]
+    if (!path) {
+      path = currentPath
+    }
     var isDuplicate = false;
     if (this.pathList.indexOf(path) !== -1) {
       //it has been used
