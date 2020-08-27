@@ -392,6 +392,7 @@ utils.extend(Uploader.prototype, {
       } else {
         input = document.createElement('input')
         input.setAttribute('type', 'file')
+        input.setAttribute('id', isDirectory ? 'folderInput' : 'fileInput')
         // display:none - not working in opera 12
         utils.extend(input.style, {
           visibility: 'hidden',
