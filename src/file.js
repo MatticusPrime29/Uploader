@@ -113,10 +113,6 @@ utils.extend(File.prototype, {
     this._prevProgress = 0
     var round = opts.forceChunkSize ? Math.ceil : Math.floor
     var chunks = Math.max(round(this.size / opts.chunkSize), 1)
-    if(chunks === 0){
-      console.log("CHUNK IS 0")
-    }
-    console.log(chunks)
     for (var offset = 0; offset < chunks; offset++) {
       this.chunks.push(new Chunk(this.uploader, this, offset))
     }
