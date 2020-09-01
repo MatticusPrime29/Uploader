@@ -291,9 +291,9 @@ utils.extend(Chunk.prototype, {
     } else {
       // Add data from the query options
       data = new FormData()
-      utils.each(query, function (v, k) {
-        data.append(k, v)
-      })
+//       utils.each(query, function (v, k) {
+//         data.append(k, v)
+//       })
       if (typeof blob !== 'undefined') {
         data.append(this.uploader.opts.fileParameterName, blob, this.file.name)
       }
