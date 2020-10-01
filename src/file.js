@@ -344,7 +344,6 @@ utils.extend(File.prototype, {
     this.aborted = !reset
     var chunks = this.chunks
     if (reset) {
-      console.log("CHUNK ARRAY IS 0");
       this.chunks = []
     }
     var uploadingStatus = Chunk.STATUS.UPLOADING
